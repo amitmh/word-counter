@@ -9,7 +9,9 @@ class ConcurrentWordStore {
 
   def add(word: String): Unit = {
     if (state.putIfAbsent(word, 1) != 0) {
-      while (!incrementCount(word)) ()
+      word.intern().synchronized {
+        incrementCount(word)
+      }
     }
   }
   @inline private def incrementCount(word: String) = {
